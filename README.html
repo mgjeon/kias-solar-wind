@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>4-Day 태양풍 예측 — COMPETITION 전문 + 데이터·이미지</title>
+<title>태양풍 속도 예측 — README 전문 + 데이터·이미지</title>
 <style>
   :root{
     --bg:#0c1018; --panel:#141a26; --panel2:#1b2433; --line:#283346;
@@ -79,8 +79,8 @@
 <body>
 <header>
   <div class="tag">SDO/AIA 193 Å · OMNI · 2011–2025</div>
-  <h1>4-Day 태양풍 속도 예측 — 전체 문서 + 데이터·이미지</h1>
-  <p>아래는 <b>COMPETITION.md 전문</b>을 그대로 옮긴 것입니다. 본문 중간에
+  <h1>태양풍 속도 예측 — 전체 문서 + 데이터·이미지</h1>
+  <p>아래는 <b>README.md 전문</b>을 그대로 옮긴 것입니다. 본문 중간에
      <code>solar_wind-public.csv</code>·<code>solar_wind-private.csv</code>에서
      직접 계산한 그래프와, 파일에 임베드한 대표 AIA 193 Å 영상을 함께 넣었습니다.</p>
   <div class="grid3" id="kpis"></div>
@@ -88,13 +88,9 @@
 
 <div class="wrap">
   <div class="md">
-<h1>4-Day Solar Wind Forecasting: Group Mini-Competition</h1>
-<h2>1. 프로젝트 질문</h2>
-<blockquote>
-<p>2011–2023년 public 자료로 모델을 개발하고, 2024–2025년 private 자료에서 4-day 태양풍 속도 예측 성능을 평가한다.</p>
-</blockquote>
-<p>우리는 public에서 자유롭게 분석하고 모델을 개발합니다. 개발 방법을 확정한 뒤 private에서 최종 성능을 한 번 확인합니다.</p>
-<h2>2. 왜 public과 private로 나누었나?</h2>
+<h1>Solar Wind Speed Forecasting</h1>
+<p>2011–2023년 public 자료로 모델을 개발하고, 2024–2025년 private 자료에서 태양풍 속도를 예측하는 그룹 미니 컴피티션입니다.</p>
+<h2>3. 왜 public과 private로 나누었나?</h2>
 <p>이 분할의 의도는 <strong>과거 자료로 모델을 개발하고, 개발 과정에서 사용하지 않은 연속된 미래 기간에서 일반화 성능을 확인하는 것</strong>입니다. 태양풍은 인접 시간의 상관이 강하므로 전체 자료를 무작위로 나누면 비슷한 시점이 train과 test에 함께 들어가 성능이 낙관적으로 보일 수 있습니다. 따라서 2011–2023은 모델과 전처리를 결정하는 development 기간으로, 그보다 미래인 2024–2025는 확정된 모델을 평가하는 holdout 기간으로 분리했습니다. 즉, 파일을 숨기기 위한 구분이 아니라 <strong>모델 선택과 최종 평가를 분리하기 위한 실험 설계</strong>입니다.</p>
 <p>Kaggle competition에 비유하면 public 기간은 모델을 개발하고 public score를 확인하는 <strong>public leaderboard 단계</strong>, private 기간은 최종 순위를 결정하는 <strong>private leaderboard 단계</strong>와 비슷합니다.</p>
 <h3>Public: 모델 개발용</h3>
@@ -120,7 +116,7 @@
 <p>Private를 본 뒤 모델을 수정하면 private는 test가 아니라 또 하나의 validation이 됩니다. Private 평가 직전에 코드와 설정을 저장하고, 평가 후에는 결과를 해석만 하는 것을 원칙으로 합니다.</p>
 <h3>이 연도 경계의 의미</h3>
 <p>Public은 약 13년으로 모델 개발에 충분히 길고, private는 최근 2년의 연속된 미래 구간입니다. Public에도 Solar Cycle 24와 Cycle 25 상승기 일부가 들어 있고, private는 Cycle 25의 높은 활동 수준을 포함하므로 시간 변화와 solar-cycle-related distribution shift를 함께 시험할 수 있습니다.</p>
-<h2>3. 데이터 생성 흐름</h2>
+<h2>13. 데이터 생성 파이프라인</h2>
 <p>최종 CSV는 다음 순서로 만들어집니다.</p>
 <pre><code class="language-text">OMNI 원본 TXT
   └─ omni.py
@@ -211,18 +207,17 @@ solar_wind-public.csv + solar_wind-private.csv
 <p>결과는 <code>solar_wind_overview.png</code>로 저장됩니다. 장기 변화, 결측 구간, 비정상적으로 큰 값, public/private 기간의 분포 차이를 눈으로 확인하는 데 사용할 수 있으며 CSV 값은 수정하지 않습니다.</p>
 <pre><code class="language-bash">uv run omni_plot.py
 </code></pre>
-<h2>4. 예측 문제</h2>
-<p>각 forecast origin <code>t</code>에서 그 시점까지 관측된 정보만 이용해 4일 뒤 Speed를 예측합니다.</p>
-<pre><code class="language-text">Target = Speed(t + 4 days)
-Forecast horizon = 4-day = 96 hours
+<h2>2. 예측 목표</h2>
+<p><strong>2024–2025년 태양풍 속도(<code>Speed (km/s)</code>)를 예측</strong>한다. 예측값은 아래 형식의 CSV로 제출한다.</p>
+<pre><code class="language-csv">datetime,predicted_speed
+2024-01-01 00:30:00,401.2
+2024-01-01 01:30:00,398.7
 </code></pre>
-<p>예를 들어 2023-12-28 00:30까지의 자료로 2024-01-01 00:30의 Speed를 예측합니다.</p>
-<h3>Walk-forward 가정</h3>
-<p>실제 예보에서는 시간이 지나면서 새로운 관측이 순서대로 들어옵니다. 따라서 private를 평가할 때도 각 시점에 이미 관측된 과거값만 사용합니다. 미래 private Speed를 미리 shift하거나 이후 시점의 Density·Temperature·B를 사용하면 안 됩니다.</p>
-<h3>왜 4-day인가?</h3>
-<p>현재 <code>Coronal Hole Area</code> 계산법이 ESWF의 중앙자오선 15° 띠 방식과 유사하고, ESWF 계열 연구에서 CH와 지구 태양풍 사이의 평균 지연을 약 4일로 보고하기 때문입니다.</p>
-<p>Public의 단순 CC는 3일에 <code>0.388</code>, 4일에 <code>0.375</code>로 3일이 조금 높지만 차이는 크지 않습니다. 이 프로젝트에서는 public 결과에 맞춰 horizon을 사후 변경하지 않고, 문헌 및 ESWF와의 비교를 위해 4-day를 사용합니다.</p>
-<h2>5. CSV 변수 설명</h2>
+<p>각 forecast origin <code>t</code>에서 그 시점까지 관측된 정보만 이용해 <code>h</code> 시간 뒤 Speed를 예측합니다.</p>
+<pre><code class="language-text">Target = Speed(t + h)
+</code></pre>
+<p><strong>h = 4일(96시간)</strong>을 기본 horizon으로 사용합니다. 다른 horizon(1–7일)도 함께 실험할 수 있으며, 여러 horizon을 동시에 예측하는 모델도 가능합니다.</p>
+<h2>1. 데이터</h2>
 <table>
 <thead>
 <tr>
@@ -240,7 +235,7 @@ Forecast horizon = 4-day = 96 hours
 <tr>
 <td><code>Speed (km/s)</code></td>
 <td>지구 근처 태양풍 속도</td>
-<td>4일 뒤 값은 target이고, forecast origin까지의 과거값은 autoregressive feature로 사용할 수 있습니다.</td>
+<td>target horizon h 뒤 값은 target이고, forecast origin까지의 과거값은 autoregressive feature로 사용할 수 있습니다.</td>
 </tr>
 <tr>
 <td><code>Density (1/cm^3)</code></td>
@@ -329,7 +324,7 @@ Forecast horizon = 4-day = 96 hours
   <div class="panel" id="overview"></div>
 </div>
 
-<h2>6. Coronal Hole Area 계산법</h2>
+<h2>4. Coronal Hole Area 계산법</h2>
 
 <div class="widget">
   <div class="wlabel">🖼 대표 AIA 193 Å 영상 — 이 파일에 직접 임베드 (회색 띠 = 중앙자오선 ±7.5°, 빨강 = CH 판정 픽셀)</div>
@@ -354,58 +349,25 @@ Forecast horizon = 4-day = 96 hours
 <li>계산하지 못한 날은 <code>NaN</code>으로 둡니다.</li>
 </ol>
 <p>따라서 현재 CH 변수는 위치, 형상, 위도별 분포, 자기장 극성을 모두 표현하지 않는 1차원 지표입니다.</p>
-<h3>Public CH–Speed correlation</h3>
-<p>2011–2023에서 <code>Coronal Hole Area(t)</code>와 <code>Speed(t+lag)</code>의 Pearson CC는 다음과 같습니다.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: right;">Lag</th>
-<th style="text-align: right;">CC</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: right;">0일</td>
-<td style="text-align: right;">0.044</td>
-</tr>
-<tr>
-<td style="text-align: right;">1일</td>
-<td style="text-align: right;">0.118</td>
-</tr>
-<tr>
-<td style="text-align: right;">2일</td>
-<td style="text-align: right;">0.267</td>
-</tr>
-<tr>
-<td style="text-align: right;">3일</td>
-<td style="text-align: right;"><strong>0.388</strong></td>
-</tr>
-<tr>
-<td style="text-align: right;">4일</td>
-<td style="text-align: right;">0.375</td>
-</tr>
-<tr>
-<td style="text-align: right;">5일</td>
-<td style="text-align: right;">0.253</td>
-</tr>
-<tr>
-<td style="text-align: right;">6일</td>
-<td style="text-align: right;">0.134</td>
-</tr>
-<tr>
-<td style="text-align: right;">7일</td>
-<td style="text-align: right;">0.071</td>
-</tr>
-</tbody>
-</table>
-<p>48–120시간을 한 시간씩 비교하면 최대값은 약 <code>82시간(3.42일), CC=0.401</code>입니다. 이는 CME 제거와 계절 보정을 하지 않은 단순 상관이므로 인과관계나 최종 모델 성능을 의미하지 않습니다.</p>
 
-<div class="widget">
-  <div class="wlabel">📈 CH(t) → Speed(t+lag일) 상관 — public CSV에서 직접 계산 (위 표를 시각화)</div>
-  <div class="panel chartbox"><canvas id="lagChart" height="220"></canvas></div>
-</div>
 
-<h2>7. ESWF 참고 모델</h2>
+<h2>5. Time Series Forecasting 접근법</h2>
+<h3>Single-horizon model</h3>
+<p>forecast origin <code>t</code>마다 <code>Speed(t + h)</code> 하나만 출력한다.</p>
+<pre><code class="language-text">[x(t-L), ..., x(t)] → Speed(t + h)
+</code></pre>
+<p>구조가 단순하고 h별로 모델을 독립적으로 최적화할 수 있다. 여러 horizon을 예측하려면 h마다 별도 모델을 학습해야 한다. 특정 horizon(4일)만 요구할 때 유리하다.</p>
+<h3>Multi-horizon model (Direct multi-step)</h3>
+<p>단일 모델이 여러 horizon을 동시에 출력한다.</p>
+<pre><code class="language-text">[x(t-L), ..., x(t)] → [Speed(t+1h), Speed(t+2h), ..., Speed(t+H)]
+</code></pre>
+<p>한 번의 추론으로 여러 미래 시점을 얻을 수 있어 효율적이다. 각 horizon마다 독립 head를 두거나 sequence-to-sequence 구조를 사용한다. 모든 horizon에 동시에 최적화되므로 특정 horizon에서 single-horizon 모델보다 성능이 낮을 수 있다.</p>
+<h3>Recursive / Autoregressive</h3>
+<p>1시간 또는 다음 타임스텝 예측 모델을 반복 호출해 원하는 horizon까지 이어간다.</p>
+<pre><code class="language-text">Speed(t+1h) → Speed(t+2h) → ... → Speed(t+H)
+</code></pre>
+<p>예측 오차가 누적(error accumulation)되므로 horizon이 길수록 성능이 떨어지는 경향이 있다. 태양풍처럼 horizon이 수일(수십~수백 스텝)인 경우 직접 예측(direct)이 유리한 경우가 많다.</p>
+<h2>6. ESWF 참고 모델</h2>
 <p>ESWF(Empirical Solar Wind Forecast)는 중앙자오선 주변 CH 면적과 약 4일 뒤 지구 태양풍 속도의 경험적 관계를 사용합니다.</p>
 <pre><code class="language-text">Coronal Hole Area(t) → Speed(t + 4 days)
 </code></pre>
@@ -416,7 +378,7 @@ Forecast horizon = 4-day = 96 hours
 <li><a target="_blank" rel="noopener" href="https://link.springer.com/article/10.1007/s11207-022-02102-5">Milošić et al. (2023)</a>: 개선된 ESWF 2.0</li>
 </ul>
 <p>현재 CSV는 ESWF 아이디어를 참고했지만 operational ESWF를 완전히 복제한 것은 아닙니다. ESWF는 시간에 따라 변하는 CH 자료와 최근 Carrington rotation을 사용해 경험식의 계수를 갱신합니다.</p>
-<h2>8. Public에서 모델을 개발하는 방법</h2>
+<h2>7. Public에서 모델을 개발하는 방법</h2>
 <h3>Train, validation, test</h3>
 <ul>
 <li><strong>Train</strong>: 모델 계수를 학습합니다.</li>
@@ -432,7 +394,7 @@ Forecast horizon = 4-day = 96 hours
 <li>Fold별 평균과 표준편차로 성능과 안정성을 함께 비교합니다.</li>
 </ul>
 <p>CV는 새로운 데이터를 만드는 data augmentation이 아니며 private test를 대체하지 않습니다. 일반 K-fold처럼 시간을 무작위로 섞으면 미래 자료가 train에 들어갈 수 있으므로 시계열에서는 시간 순서를 고려해야 합니다.</p>
-<h2>9. 사용할 수 있는 split 예시</h2>
+<h2>8. 사용할 수 있는 split 예시</h2>
 <p>아래 방법은 가능한 선택지를 설명하기 위한 예시입니다. 모든 split을 반드시 구현하거나 성능을 비교할 필요는 없습니다. 목적과 계산시간에 맞는 방법 하나를 선택하고, 선택 이유와 미래정보 누출 여부를 설명하면 됩니다. 가장 단순한 방법은 S4이고, 조금 더 안정적인 평가가 필요하면 S5를 사용할 수 있습니다.</p>
 <h3>S1. Random hourly split</h3>
 <p>시간 행을 무작위로 나눕니다. 구현은 쉽지만 인접 시점과 동일 날짜의 CH가 train/test에 섞이므로 실제 시계열 forecasting에는 권장하지 않습니다.</p>
@@ -454,9 +416,9 @@ Fold 6: Train 2011–2021 / Validation 2022 / Test 2023
 </code></pre>
 <p>학습기간을 점차 늘리면서 항상 미래 연도를 평가합니다. Rolling-origin evaluation 또는 forward-chaining CV라고도 합니다. 시간 순서를 지키면서 여러 미래 구간의 성능 변동을 확인하고 싶을 때 사용할 수 있는 비교적 안정적인 방법입니다.</p>
 <h3>Split 경계 주의</h3>
-<p>4-day target을 만들 때 train 입력에 연결된 정답이 validation/test 기간으로 넘어가면 안 됩니다. Target timestamp 기준으로 표본을 나누거나 각 경계에서 최소 96시간을 제거합니다.</p>
+<p>target을 만들 때 train 입력에 연결된 정답이 validation/test 기간으로 넘어가면 안 됩니다. Target timestamp 기준으로 표본을 나누거나 각 경계에서 최소 h 시간을 제거합니다.</p>
 <p>Scaler, imputer, feature selection은 각 fold의 train에서만 <code>fit</code>하고 validation/test에는 <code>transform</code>만 적용합니다.</p>
-<h2>10. Baseline</h2>
+<h2>9. Baseline</h2>
 <h3>Persistence</h3>
 <ul>
 <li><strong>4-day persistence</strong>: <code>Speed(t+4일) = Speed(t)</code>로 예측합니다.</li>
@@ -514,27 +476,11 @@ CC   = Pearson correlation(y_i, p_i)
 <td style="text-align: right;"><strong>0.427</strong></td>
 <td style="text-align: right;">0.000</td>
 </tr>
-<tr>
-<td>Public median (<code>397.00</code>)</td>
-<td style="text-align: right;">17,280</td>
-<td style="text-align: right;">80.48</td>
-<td style="text-align: right;">115.69</td>
-<td style="text-align: right;">—</td>
-<td style="text-align: right;">-0.008</td>
-</tr>
-<tr>
-<td>4-day persistence</td>
-<td style="text-align: right;">17,280</td>
-<td style="text-align: right;">104.72</td>
-<td style="text-align: right;">137.60</td>
-<td style="text-align: right;">0.146</td>
-<td style="text-align: right;">-0.312</td>
-</tr>
+
 </tbody>
 </table>
-<p>Climatology는 HSS 도착 시점을 맞히지 못하고 상수라서 CC도 정의되지 않습니다. 따라서 MAE·RMSE뿐 아니라 CC와 실제 HSS 사례를 함께 확인해야 합니다. 선택한 split에서도 baseline을 같은 test 기간에 다시 계산합니다.</p>
-<p>예를 들어 2024-01-01 00:30의 27-day persistence는 2023-12-05 00:30의 public Speed를 사용합니다. <code>make_baseline_submissions.py</code>가 네 baseline의 private 예측 CSV를 만들고, <code>evaluate_submissions.py</code>가 위 표의 점수와 랭킹을 계산합니다.</p>
-<h2>11. 평가 지표</h2>
+<p>Public mean은 MAE·RMSE 기준으로 27-day persistence보다 약간 좋지만 CC가 정의되지 않아 HSS 도착 시점을 전혀 맞히지 못한다. <strong>개발 모델은 MAE Skill &gt; 0이면서 CC &gt; 0.427을 동시에 달성하는 것을 목표로 한다.</strong></p>
+<h3>평가 지표</h3>
 <ul>
 <li><strong>MAE</strong>: 평균적인 예측 오차. 낮을수록 좋습니다.</li>
 <li><strong>RMSE</strong>: 큰 오차를 더 강하게 벌점합니다. 낮을수록 좋습니다.</li>
@@ -549,10 +495,10 @@ CC   = Pearson correlation(y_i, p_i)
 <li><code>Skill &lt; 0</code>: 27-day persistence보다 나쁨</li>
 </ul>
 <p>Target Speed가 <code>NaN</code>인 시점은 평가에서 제외합니다. 모든 모델과 baseline은 같은 target 시점에서 비교합니다.</p>
-<h2>12. 권장 조별 진행 순서</h2>
+<h2>10. 권장 조별 진행 순서</h2>
 <ol>
 <li>Public 데이터와 결측치를 탐색합니다.</li>
-<li>4-day target과 causal lag feature를 만듭니다.</li>
+<li>target과 causal lag feature를 만듭니다.</li>
 <li>Baseline을 구현합니다.</li>
 <li>Public 안에서 사용할 validation split 하나를 정합니다.</li>
 <li>Public에서 모델과 hyperparameter를 결정합니다.</li>
@@ -561,7 +507,7 @@ CC   = Pearson correlation(y_i, p_i)
 <li>Private를 한 번 평가합니다.</li>
 <li>Public–private 성능 차이, leakage, 계절 및 Solar Cycle 의존성을 토론합니다.</li>
 </ol>
-<h2>13. 최종 결과물</h2>
+<h2>11. 최종 결과물</h2>
 <ul>
 <li>재현 가능한 전처리·학습·예측 코드</li>
 <li>사용한 split, feature, 모델과 선택 이유</li>
@@ -570,7 +516,7 @@ CC   = Pearson correlation(y_i, p_i)
 <li>Public과 private 성능 차이에 대한 해석</li>
 <li>한계와 후속 개선 아이디어</li>
 </ul>
-<h2>14. 예시 제출과 평가 코드</h2>
+<h2>12. 시작하기 및 제출</h2>
 <p>다음 명령은 4개 baseline 제출 CSV를 한 번에 만듭니다.</p>
 <pre><code class="language-bash">uv run make_baseline_submissions.py
 </code></pre>
@@ -584,7 +530,7 @@ CC   = Pearson correlation(y_i, p_i)
 <pre><code class="language-bash">uv run solarwind2/evaluate_submissions.py
 </code></pre>
 <p>평가 코드는 모든 CSV를 같은 private target 시점에서 비교하고 MAE가 낮은 순서로 랭킹을 출력합니다. RMSE, CC와 27-day persistence 대비 MAE Skill도 함께 표시하며 결과를 <code>submissions/evaluation_ranking.csv</code>에 저장합니다.</p>
-<h2>15. 유사 사례</h2>
+<h2>14. 유사 사례</h2>
 <p>NOAA/NASA의 <a target="_blank" rel="noopener" href="https://www.drivendata.org/competitions/73/noaa-magnetic-forecasting/">MagNet competition</a>은 실시간 태양풍 자료로 Dst를 예측하고 미래 기간에서 최종 평가했습니다. NASA CCMC의 <a target="_blank" rel="noopener" href="https://ccmc.gsfc.nasa.gov/models/SIML-HSS~1/">SIML-HSS</a>는 코로날 홀과 과거 태양풍을 이용해 4-day solar-wind forecast를 수행합니다.</p>
   </div>
   <footer>

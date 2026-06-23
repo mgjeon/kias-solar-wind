@@ -9,8 +9,10 @@ wheels/
 # Virtual environments
 .venv
 
-# Claude Code local settings
+# AGENTS local settings
 .claude/
+.agents/
+plan*/
 
 # Large Data
 aia193*/

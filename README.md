@@ -11,7 +11,7 @@
 | 위치 | 내용 |
 |------|------|
 | 이 저장소 | CSV 데이터, 코드, 문서 |
-| [HuggingFace Dataset](https://huggingface.co/datasets/<username>/solar-wind-aia193) | SDO/AIA 193Å FITS (6.1 GB), 시각화 PNG (5.1 GB) |
+| [HuggingFace Dataset](https://huggingface.co/datasets/mingyujeon/kias-solar-wind) | SDO/AIA 193Å FITS (6.1 GB), 시각화 PNG (5.1 GB) |
 
 ### CSV 파일
 
@@ -38,7 +38,7 @@
 ## 시작하기
 
 ```bash
-git clone https://github.com/<username>/solar-wind
+git clone https://github.com/mgjeon/kias-solar-wind
 cd solar-wind
 uv sync
 ```
@@ -46,7 +46,14 @@ uv sync
 FITS/PNG가 필요한 경우 HuggingFace에서 추가로 다운로드합니다.
 
 ```bash
-huggingface-cli download <username>/solar-wind-aia193 --repo-type dataset --local-dir .
+# 전체 다운로드
+uvx hf download mingyujeon/kias-solar-wind --repo-type dataset --local-dir .
+
+# FITS만 필요한 경우
+uvx hf download mingyujeon/kias-solar-wind --repo-type dataset --local-dir . --include "aia193_download/*"
+
+# PNG만 필요한 경우
+uvx hf download mingyujeon/kias-solar-wind --repo-type dataset --local-dir . --include "aia193_plot/*"
 ```
 
 ---
